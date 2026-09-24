@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Strong Password Generator – Free & Secure</title>
+  <meta name="description" content="Generate strong, secure, or memorable passwords instantly. Free online password generator with length, symbols, and memorable options." />
+  <meta name="theme-color" content="#0f172a" />
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --border: #334155;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-hover: #7dd3fc;
+      --success: #4ade80;
+      --danger: #f87171;
+      --warning: #fbbf24;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+      line-height: 1.5;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 520px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+      letter-spacing: -0.02em;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Password output */
+    .output-section {
+      margin-bottom: 1.5rem;
+    }
+
+    .password-display {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    #password {
+      flex: 1;
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.9rem 1rem;
+      font-size: 1.1rem;
+      font-family: "SF Mono", "Fira Code", Consolas, monospace;
+      color: var(--text);
+      letter-spacing: 0.03em;
+      word-break: break-all;
+    }
+
+    #password:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 0.9rem 1.1rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0f172a;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-secondary {
+      background: #334155;
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      background: #475569;
+    }
+
+    .btn-copy {
+      min-width: 90px;
+    }
+
+    .strength {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .strength-bar {
+      flex: 1;
+      height: 6px;
+      background: #334155;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .strength-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 99px;
+      transition: width 0.3s ease, background 0.3s ease;
+    }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .control-group label {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--muted);
+    }
+
+    .length-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    #length {
+      flex: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      background: #334155;
+      border-radius: 99px;
+      outline: none;
+    }
+
+    #length::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      background: var(--accent);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    #lengthValue {
+      min-width: 2.2rem;
+      text-align: center;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .checkbox-item input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .checkbox-item span {
+      font-size: 0.95rem;
+    }
+
+    .mode-toggle {
+      display: flex;
+      background: #0f172a;
+      border-radius: 10px;
+      padding: 4px;
+      border: 1px solid var(--border);
+    }
+
+    .mode-toggle button {
+      flex: 1;
+      padding: 0.6rem;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.9rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .mode-toggle button.active {
+      background: var(--accent);
+      color: #0f172a;
+    }
+
+    .generate-btn {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1.05rem;
+      margin-top: 0.5rem;
+    }
+
+    /* Footer / Monetization */
+    footer {
+      margin-top: 2.5rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .support {
+      margin-top: 1.5rem;
+      padding: 1.25rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .support p {
+      margin-bottom: 0.75rem;
+      font-size: 0.9rem;
+    }
+
+    .support a {
+      display: inline-block;
+      background: #ff5e5b;
+      color: white;
+      text-decoration: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: background 0.15s ease;
+    }
+
+    .support a:hover {
+      background: #ff7b78;
+    }
+
+    .ad-placeholder {
+      margin-top: 1.5rem;
+      padding: 1.5rem;
+      background: #1e293b;
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--success);
+      color: #0f172a;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 600;
+      opacity: 0;
+      transition: all 0.3s ease;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    @media (max-width: 480px) {
+      .checkbox-grid {
+        grid-template-columns: 1fr;
+      }
+      header h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Password Generator</h1>
+      <p>Create strong or memorable passwords instantly</p>
+    </header>
+
+    <div class="card">
+      <!-- Output -->
+      <div class="output-section">
+        <div class="password-display">
+          <input type="text" id="password" readonly value="Click Generate" />
+          <button class="btn btn-secondary btn-copy" id="copyBtn" title="Copy to clipboard">
+            Copy
+          </button>
+        </div>
+        <div class="strength">
+          <span id="strengthText">Strength</span>
+          <div class="strength-bar">
+            <div class="strength-fill" id="strengthFill"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls">
+        <!-- Mode -->
+        <div class="control-group">
+          <label>Password Type</label>
+          <div class="mode-toggle">
+            <button type="button" class="active" data-mode="random" id="modeRandom">Random</button>
+            <button type="button" data-mode="memorable" id="modeMemorable">Memorable</button>
+          </div>
+        </div>
+
+        <!-- Length -->
+        <div class="control-group">
+          <label>Length: <span id="lengthValue">16</span></label>
+          <div class="length-row">
+            <input type="range" id="length" min="8" max="64" value="16" />
+          </div>
+        </div>
+
+        <!-- Character options (only for Random mode) -->
+        <div class="control-group" id="charOptions">
+          <label>Include</label>
+          <div class="checkbox-grid">
+            <label class="checkbox-item">
+              <input type="checkbox" id="uppercase" checked />
+              <span>Uppercase (A-Z)</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" id="lowercase" checked />
+              <span>Lowercase (a-z)</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" id="numbers" checked />
+              <span>Numbers (0-9)</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" id="symbols" checked />
+              <span>Symbols (!@#$)</span>
+            </label>
+          </div>
+        </div>
+
+        <button class="btn btn-primary generate-btn" id="generateBtn">
+          Generate Password
+        </button>
+      </div>
+    </div>
+
+    <!-- Support / Monetization -->
+    <div class="support">
+      <p>This tool is free. If it helped you, consider supporting it ❤️</p>
+      <a href="https://ko-fi.com/" target="_blank" rel="noopener" id="supportLink">
+        Buy me a coffee
+      </a>
+    </div>
+
+    <!-- AdSense placeholder (replace later) -->
+    <div class="ad-placeholder">
+      <!-- Replace this div with your Google AdSense code once approved -->
+      Advertisement space
+    </div>
+
+    <footer>
+      <p>Passwords are generated locally in your browser.<br>Nothing is ever sent to a server.</p>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast">Copied to clipboard!</div>
+
+  <script>
+    // ============ CONFIG ============
+    // Change this to your real Ko-fi or BuyMeACoffee link later
+    const SUPPORT_LINK = "https://ko-fi.com/";
+
+    // ============ WORD LIST (for memorable mode) ============
+    // Small curated list of common, easy-to-type words
+    const WORDS = [
+      "apple","brave","cloud","dream","eagle","flame","grape","happy","island","jungle",
+      "kitten","lemon","magic","noble","ocean","piano","queen","river","sunny","tiger",
+      "umbra","vivid","whale","xenon","yacht","zebra","amber","blaze","coral","delta",
+      "ember","frost","glow","harbor","ivory","jade","karma","lunar","moss","nova",
+      "orbit","pearl","quartz","ridge","storm","thorn","ultra","vortex","willow","zenith",
+      "anchor","breeze","canyon","dawn","echo","falcon","glacier","horizon","iris","jewel",
+      "kite","lagoon","meadow","nectar","oasis","prism","quill","raven","sage","tide",
+      "unity","valley","wave","xylophone","yearn","zephyr","atlas","bloom","crisp","dusk",
+      "elm","fern","grove","haze","ink","jolt","knoll","lotus","mist","nymph"
+    ];
+
+    // ============ ELEMENTS ============
+    const passwordEl = document.getElementById("password");
+    const copyBtn = document.getElementById("copyBtn");
+    const generateBtn = document.getElementById("generateBtn");
+    const lengthSlider = document.getElementById("length");
+    const lengthValue = document.getElementById("lengthValue");
+    const strengthFill = document.getElementById("strengthFill");
+    const strengthText = document.getElementById("strengthText");
+    const charOptions = document.getElementById("charOptions");
+    const modeRandom = document.getElementById("modeRandom");
+    const modeMemorable = document.getElementById("modeMemorable");
+    const toast = document.getElementById("toast");
+    const supportLink = document.getElementById("supportLink");
+
+    supportLink.href = SUPPORT_LINK;
+
+    let currentMode = "random";
+
+    // ============ MODE TOGGLE ============
+    modeRandom.addEventListener("click", () => setMode("random"));
+    modeMemorable.addEventListener("click", () => setMode("memorable"));
+
+    function setMode(mode) {
+      currentMode = mode;
+      modeRandom.classList.toggle("active", mode === "random");
+      modeMemorable.classList.toggle("active", mode === "memorable");
+      charOptions.style.display = mode === "random" ? "flex" : "none";
+      generatePassword();
+    }
+
+    // ============ LENGTH ============
+    lengthSlider.addEventListener("input", () => {
+      lengthValue.textContent = lengthSlider.value;
+      generatePassword();
+    });
+
+    // ============ CHECKBOXES ============
+    ["uppercase", "lowercase", "numbers", "symbols"].forEach(id => {
+      document.getElementById(id).addEventListener("change", generatePassword);
+    });
+
+    // ============ GENERATE ============
+    generateBtn.addEventListener("click", generatePassword);
+
+    function generatePassword() {
+      const length = parseInt(lengthSlider.value, 10);
+
+      let password = "";
+      if (currentMode === "memorable") {
+        password = generateMemorable(length);
+      } else {
+        password = generateRandom(length);
+      }
+
+      passwordEl.value = password;
+      updateStrength(password);
+    }
+
+    function generateRandom(length) {
+      const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      const lower = "abcdefghijklmnopqrstuvwxyz";
+      const nums = "0123456789";
+      const syms = "!@#$%^&*()_+-=[]{}|;:,.<>?";
+
+      let charset = "";
+      if (document.getElementById("uppercase").checked) charset += upper;
+      if (document.getElementById("lowercase").checked) charset += lower;
+      if (document.getElementById("numbers").checked) charset += nums;
+      if (document.getElementById("symbols").checked) charset += syms;
+
+      if (!charset) {
+        return "Select at least one option";
+      }
+
+      // Ensure at least one character from each selected set
+      let password = "";
+      const required = [];
+      if (document.getElementById("uppercase").checked) required.push(upper);
+      if (document.getElementById("lowercase").checked) required.push(lower);
+      if (document.getElementById("numbers").checked) required.push(nums);
+      if (document.getElementById("symbols").checked) required.push(syms);
+
+      // Add one from each required set
+      required.forEach(set => {
+        password += set[Math.floor(Math.random() * set.length)];
+      });
+
+      // Fill the rest
+      for (let i = password.length; i < length; i++) {
+        password += charset[Math.floor(Math.random() * charset.length)];
+      }
+
+      // Shuffle
+      return password.split("").sort(() => Math.random() - 0.5).join("");
+    }
+
+    function generateMemorable(length) {
+      // Aim for roughly the requested length using words + numbers
+      let result = [];
+      let currentLength = 0;
+
+      while (currentLength < length - 4) {
+        const word = WORDS[Math.floor(Math.random() * WORDS.length)];
+        result.push(word.charAt(0).toUpperCase() + word.slice(1));
+        currentLength += word.length + 1; // +1 for separator
+      }
+
+      // Add a number for extra strength
+      const number = Math.floor(Math.random() * 90) + 10;
+      result.push(number);
+
+      let password = result.join("-");
+
+      // Trim or pad if needed (rare)
+      if (password.length > length) {
+        password = password.slice(0, length);
+      }
+
+      return password;
+    }
+
+    // ============ STRENGTH ============
+    function updateStrength(password) {
+      if (!password || password === "Select at least one option" || password === "Click Generate") {
+        strengthFill.style.width = "0%";
+        strengthText.textContent = "Strength";
+        strengthFill.style.background = "#334155";
+        return;
+      }
+
+      let score = 0;
+      if (password.length >= 12) score += 1;
+      if (password.length >= 16) score += 1;
+      if (password.length >= 20) score += 1;
+      if (/[A-Z]/.test(password)) score += 1;
+      if (/[a-z]/.test(password)) score += 1;
+      if (/[0-9]/.test(password)) score += 1;
+      if (/[^A-Za-z0-9]/.test(password)) score += 1;
+      if (password.includes("-") && password.length > 12) score += 1; // memorable bonus
+
+      const percent = Math.min(100, (score / 7) * 100);
+      strengthFill.style.width = percent + "%";
+
+      if (score <= 2) {
+        strengthText.textContent = "Weak";
+        strengthFill.style.background = "var(--danger)";
+      } else if (score <= 4) {
+        strengthText.textContent = "Fair";
+        strengthFill.style.background = "var(--warning)";
+      } else if (score <= 6) {
+        strengthText.textContent = "Strong";
+        strengthFill.style.background = "var(--success)";
+      } else {
+        strengthText.textContent = "Very Strong";
+        strengthFill.style.background = "#22c55e";
+      }
+    }
+
+    // ============ COPY ============
+    copyBtn.addEventListener("click", async () => {
+      const text = passwordEl.value;
+      if (!text || text === "Click Generate" || text === "Select at least one option") return;
+
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast("Copied to clipboard!");
+      } catch (err) {
+        // Fallback
+        passwordEl.select();
+        document.execCommand("copy");
+        showToast("Copied!");
+      }
+    });
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2000);
+    }
+
+    // ============ INIT ============
+    generatePassword();
+  </script>
+</body>
+</html>
